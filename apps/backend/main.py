@@ -1,3 +1,4 @@
+from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
 import ai
@@ -6,17 +7,20 @@ import asyncio
 app = FastAPI()
 
 class model(BaseModel):
-    id: str | list[str] = str
+    id: list[str] | str
+
+@app.get("/check")
+def check():
+    return "success"
 
 @app.post("/")
 async def get_captions(videoId:model):
     if isinstance(videoId.id,str):
         caption = await utils.generate_captions(videoId.id)
-        translated_text:ai.Translated_text =ai.translate_to_hinglish(caption).parsed
+        translated_text =ai.translate_to_hinglish(caption).parsed
         return [translated_text]
     if isinstance(videoId.id,list):
         captions = await asyncio.gather(*[utils.generate_captions(i) for i in videoId.id])
-        translated_captions = await asyncio.gather(*[ai.translate_to_hinglish(cap) for cap in captions])
-        for i in range(len(translated_captions)):
-            translated_captions[i] = translated_captions[i].parsed
+        translated_captions = [ai.translate_to_hinglish(cap).parsed for cap in captions]
+
         return translated_captions

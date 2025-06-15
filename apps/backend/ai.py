@@ -7,7 +7,7 @@ class Translated_text(BaseModel):
     summary:str
 
 client = genai.Client(api_key=env.GOOGPE_GENAI_API)
-async def translate_to_hinglish(text:str):
+def translate_to_hinglish(text:str):
     return client.models.generate_content(
         model="gemini-2.0-flash",
         config=types.GenerateContentConfig(
