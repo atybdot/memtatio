@@ -9,7 +9,7 @@ class Translated_text(BaseModel):
 client = genai.Client(api_key=env.GOOGPE_GENAI_API)
 def translate_to_hinglish(text:str):
     return client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-2.0-flash-lite",
         config=types.GenerateContentConfig(
                 system_instruction="""
                 Your task is to first check weather a given text is in hindi letter or in hindi transcripts.
@@ -33,5 +33,5 @@ def translate_to_hinglish(text:str):
                 response_mime_type= "application/json",
                 response_schema=Translated_text
         ),
-                contents=text,
+                contents=text
     )
