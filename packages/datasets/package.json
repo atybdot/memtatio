@@ -1,0 +1,17 @@
+{
+  "name": "@memtatio/datasets",
+  "version": "0.0.0",
+  "license": "MIT",
+  "exports": [
+    "./src/index.ts",
+    "./src/assets/data-sets/ab.json",
+    "./src/assets/data-sets/cwh.json",
+    "./src/assets/data-sets/hc.json",
+    "./src/assets/data-sets/ma.json",
+    "./src/assets/data-sets/pg.json"
+  ],
+  "packageManager": "pnpm@10.10.0",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
