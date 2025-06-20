@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "server",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-06-17",
+   "vars": {
+    "GOOGLE_GENAI_API": "",
+    "UPSTASH_ENDPOINT": "",
+    "UPSTASH_TOKEN": "",
+    "CROSS_ORIGIN" : "",
+  },
+}
