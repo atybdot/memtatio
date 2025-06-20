@@ -1,0 +1,43 @@
+name : request to add/remove a youtuber
+description: ask to add/remove a youtuber from the chat models
+title: "[request]: "
+labels:
+  - youtuber
+  - request
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: select what do you want to do?
+      description: weather you want to add a youtuber or remove it.
+      multiple: false
+      options:
+        - add a youtuber
+        - remove a youtuber
+      default: 0
+    validations:
+          required: true
+  - type: textarea
+    id: info
+    attributes:
+      label : Describe who is this youtuber
+    validations:
+        required: true
+  - type: textarea
+    id: links
+    attributes:
+      label: paste his socials
+      description: socials links
+      placeholder: "youtube : youtube.com/@<handleName>"
+    validations:
+        required: true
+  - type: dropdown
+    id: self
+    attributes:
+      label: Do you have permission from this youtuber to file this request
+      options:
+        - yes
+        - no
+      default: 1
+    validations:
+        required: true

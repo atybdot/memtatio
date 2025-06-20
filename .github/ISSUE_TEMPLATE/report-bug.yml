@@ -1,22 +1,21 @@
-name : report issue on website/front-end
-description: report something broken on the front-end side or how ui/ux can be improved or issues regarding website
-title: "[front-end-issue]: "
+name : report issue.
+description: report something broken.
+title: "[issue]: "
 labels:
   - bug
-  - front-end
-  - website
+  - issue
 body:
   - type: dropdown
     id: category
     attributes:
       label: select category of the bug
-      description: select category of your issue ex. website, ui/ux, chatbot front-end
+      description: select category of your issue ex. website, chatbot, front-end
       multiple: false
       options:
-        - front-end
+        - front-end broken
         - website (ui/ux)
         - unexpected behaviour
-        - chatbot front-end
+        - chatbot
     validations:
           required: true
   - type: textarea
