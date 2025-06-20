@@ -1,0 +1,56 @@
+name : report issue on website/front-end
+description: report something broken on the front-end side or how ui/ux can be improved or issues regarding website
+title: "[front-end-issue]: "
+labels:
+  - bug
+  - front-end
+  - website
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: select category of the bug
+      description: select category of your issue ex. website, ui/ux, chatbot front-end
+      multiple: false
+      options:
+        - front-end
+        - website (ui/ux)
+        - unexpected behaviour
+        - chatbot front-end
+    validations:
+          required: true
+  - type: textarea
+    id: description
+    attributes:
+      label : Describe your issue in detail.
+      placeholder: this button is broken when clicked
+    validations:
+        required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: steps to reproduce
+      description: how to reproduce this issue
+      placeholder: 1. go to /chat.\n2.do something\n3.issue occurs
+    validations:
+        required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: expected behaviour
+      description: what should've happened?
+      placeholder: the ui should show spinner while loading.
+    validations:
+        required: true
+  - type: textarea
+    id: images
+    attributes:
+      label: schreeen shots
+      description: attach required screen shots
+    validations:
+        required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: additional context
+      description: more context regarding this issue
