@@ -9,10 +9,10 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { stream } from "hono/streaming";
 
-const app = new Hono<{ Bindings: CloudflareBindings }>()
+const app = new Hono<{ Bindings: CloudflareBindings }>();
 app.use("*", async (c, next) => {
   const corsMiddlewareHandler = cors({
-    origin:c.env.ENV === "dev" ? "*" :  c.env.CORS_ORIGIN,
+    origin: "*",
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: [
       "X-Vercel-AI-Data-Stream",
@@ -26,7 +26,7 @@ app.use("*", async (c, next) => {
   });
   return corsMiddlewareHandler(c, next);
 });
-app.use(logger(),);
+app.use(logger());
 app.use((c, next: Next) =>
   rateLimiter<{ Bindings: CloudflareBindings }>({
     windowMs: 60 * 1000 * 60 * 24, // 200 messages per 24 hours,
