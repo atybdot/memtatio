@@ -63,7 +63,7 @@ function RouteComponent() {
       };
     }[]
   >();
-  const [ratelimit, setLimit] = useLocalStorage<number>("rate-limit", 200);
+  const [ratelimit, setLimit] = useLocalStorage<string>("rate-limit", "200");
   const [isCopied, setIsCopied] = useState(false);
   const { input, messages, handleInputChange, handleSubmit, status, stop } =
     useChat({
@@ -79,7 +79,7 @@ function RouteComponent() {
 
         window.localStorage.setItem("memtatio-model", id);
         const limit = response.headers.get("ratelimit-remaining")!;
-        setLimit(Number.parseInt(limit, 10));
+        setLimit(limit);
       },
       onFinish(message) {
         const getCurrentModel = window.localStorage.getItem(
