@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import {
+  Check,
   Copy,
   InfoIcon,
   Loader2,
@@ -32,6 +33,8 @@ import { type TOption, options } from "@/data/AIOptions.data";
 import { nanoid } from "nanoid";
 import { toast } from "sonner";
 import { searchSchema } from "@/lib/schemas";
+
+import { useTimeout, useLocalStorage } from "usehooks-ts";
 import { env } from "@/env";
 
 export const Route = createFileRoute("/chat/")({
@@ -60,10 +63,11 @@ function RouteComponent() {
       };
     }[]
   >();
-  const [ratelimit, setLimt] = useState<number>(200);
+  const [ratelimit, setLimit] = useLocalStorage<number>("rate-limit", 200);
+  const [isCopied, setIsCopied] = useState(false);
   const { input, messages, handleInputChange, handleSubmit, status, stop } =
     useChat({
-      api: env.VITE_API_URL,
+      api: env.VITE_API_URL + "/chat",
       streamProtocol: "data",
       sendExtraMessageFields: true,
       onError(error) {
@@ -75,7 +79,7 @@ function RouteComponent() {
 
         window.localStorage.setItem("memtatio-model", id);
         const limit = response.headers.get("ratelimit-remaining")!;
-        setLimt(Number.parseInt(limit, 10));
+        setLimit(Number.parseInt(limit, 10));
       },
       onFinish(message) {
         const getCurrentModel = window.localStorage.getItem(
@@ -84,8 +88,6 @@ function RouteComponent() {
         const getUrl = options.find((i) => i.id === getCurrentModel)?.url ?? "";
         const name =
           options.find((i) => i.id === getCurrentModel)?.meta.name ?? "";
-        console.log("[FROM FINISH]", getUrl);
-
         if (Array.isArray(currentAI)) {
           setCurrentAI([
             ...currentAI,
@@ -124,14 +126,19 @@ function RouteComponent() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+    setIsCopied(true)
+    setTimeout(()=>setIsCopied((p)=>!p),1000)
   };
 
   return (
     <section className=" font-b">
       <div className="flex h-full flex-col">
-        <section className="h-100 md:h-130" ref={containerRef}>
+        <section
+          className="h-100 md:h-130 overflow-y-scroll scrollbar-thin"
+          ref={containerRef}
+        >
           {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1">
             <div className="mx-auto max-w-4xl space-y-6 p-4">
               {/* INITIAL PAGE */}
               {messages.length === 0 && status !== "streaming" && (
@@ -204,11 +211,12 @@ function RouteComponent() {
                           <div className="grid place-content-end border-t p-1.5">
                             <Button
                               variant="ghost"
+                              disabled={isCopied}
                               onClick={() => copyToClipboard(message.content)}
                               className="h-6 p-2 py-4 text-sm"
                             >
-                              <Copy className="size-3.5" />
-                              Copy
+                              {isCopied ? <Check/> :<Copy className="size-3.5" />}
+                              {isCopied ? "copied" : "Copy"}
                             </Button>
                           </div>
                         )}
