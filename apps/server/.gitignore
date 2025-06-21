@@ -14,8 +14,8 @@ dist/
 # deps
 node_modules/
 .wrangler
-wrangler.*
-!*.sample
+
+*.local.jsonc
 *.d.ts
 # env
 .env
