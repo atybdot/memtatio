@@ -2,9 +2,26 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import * as dataSets from "@memtatio/datasets";
 import { smoothStream, streamText } from "ai";
 import { Hono, type Next } from "hono";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { stream } from "hono/streaming";
 const app = new Hono<{ Bindings: CloudflareBindings }>()
+app.use("*", async (c, next) => {
+  const corsMiddlewareHandler = cors({
+    origin:c.env.ENV === "dev" ? "*" :  c.env.CORS_ORIGIN,
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    exposeHeaders: [
+      "X-Vercel-AI-Data-Stream",
+      "Content-Type",
+      "Content-Encoding",
+      "x-memtatio-ai",
+      "ratelimit-remaining",
+    ],
+    maxAge: 600,
+    credentials: true,
+  });
+  return corsMiddlewareHandler(c, next);
+});
 app.use(logger(),);
 app.post("/chat", async (c) => {
   const { memtatio, messages } = await c.req.json();
