@@ -8,6 +8,12 @@ import { routeTree } from "./routeTree.gen";
 
 import "./styles.css";
 import reportWebVitals from "./reportWebVitals.ts";
+import { PostHogProvider } from "posthog-js/react";
+import { env } from "./env.ts";
+
+const options = {
+  api_host: env.VITE_POSTHOG_HOST,
+};
 
 scan({ enabled: true });
 // Create a new router instance
@@ -33,7 +39,9 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <PostHogProvider apiKey={env.VITE_POSTHOG_KEY} options={options}>
+        <RouterProvider router={router} />
+      </PostHogProvider>
     </StrictMode>
   );
 }
