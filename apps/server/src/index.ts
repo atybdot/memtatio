@@ -1,10 +1,14 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { RedisStore } from "@hono-rate-limiter/redis";
 import * as dataSets from "@memtatio/datasets";
+import { Redis } from "@upstash/redis/cloudflare";
 import { smoothStream, streamText } from "ai";
 import { Hono, type Next } from "hono";
+import { rateLimiter } from "hono-rate-limiter";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { stream } from "hono/streaming";
+
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 app.use("*", async (c, next) => {
   const corsMiddlewareHandler = cors({
@@ -24,7 +28,7 @@ app.use("*", async (c, next) => {
 });
 app.use(logger(),);
 app.use((c, next: Next) =>
-  rateLimiter<{ Bindings: Bindings }>({
+  rateLimiter<{ Bindings: CloudflareBindings }>({
     windowMs: 60 * 1000 * 60 * 24, // 200 messages per 24 hours,
     limit: 200,
     standardHeaders: "draft-6",
@@ -37,9 +41,27 @@ app.use((c, next: Next) =>
     }),
   })(c, next)
 );
+
+app.get("/datasets", (c) => {
+  const dataset = dataSets.hitesh;
+  const examplesString = dataset.data
+    .map(
+      (i) =>
+        `#example\n${
+          i.title.startsWith("where he is talking about")
+            ? "this is title of the video"
+            : "this is title of the video where he is talking about"
+        } "${i.title}" :\n${i.text}\n`
+    )
+    .join("\n");
+
+  return c.text(examplesString);
+});
+
 app.post("/chat", async (c) => {
   const { memtatio, messages } = await c.req.json();
   console.info("GOT: ", memtatio);
+
   const toMimic = dataSets.datasets.find((ai) => ai.username === memtatio);
   const dataset = toMimic?.username ? toMimic : dataSets.hitesh;
   toMimic?.username
@@ -50,9 +72,11 @@ app.post("/chat", async (c) => {
       );
 
   console.log("[AI]: ", dataset.username);
+
   const google = createGoogleGenerativeAI({
     apiKey: c.env.GOOGLE_GENAI_API,
   });
+
   //prepare string for dataset
   const examplesString = dataset.data
     .map(
@@ -64,6 +88,7 @@ app.post("/chat", async (c) => {
         } "${i.title}" :\n${i.text}\n`
     )
     .join("\n");
+
   const result = streamText({
     model: google("gemini-2.5-flash"),
     messages,
@@ -110,4 +135,5 @@ app.post("/chat", async (c) => {
   c.header("x-memtatio-ai", memtatio ?? dataset.username);
   return stream(c, (s) => s.pipe(result.toDataStream()));
 });
+
 export default app;
