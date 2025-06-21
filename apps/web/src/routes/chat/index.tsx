@@ -34,7 +34,7 @@ import { nanoid } from "nanoid";
 import { toast } from "sonner";
 import { searchSchema } from "@/lib/schemas";
 
-import { useTimeout, useLocalStorage } from "usehooks-ts";
+import {  useLocalStorage } from "usehooks-ts";
 import { env } from "@/env";
 
 export const Route = createFileRoute("/chat/")({
