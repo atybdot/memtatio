@@ -23,6 +23,20 @@ app.use("*", async (c, next) => {
   return corsMiddlewareHandler(c, next);
 });
 app.use(logger(),);
+app.use((c, next: Next) =>
+  rateLimiter<{ Bindings: Bindings }>({
+    windowMs: 60 * 1000 * 60 * 24, // 200 messages per 24 hours,
+    limit: 200,
+    standardHeaders: "draft-6",
+    keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "",
+    store: new RedisStore({
+      client: new Redis({
+        url: c.env.UPSTASH_ENDPOINT,
+        token: c.env.UPSTASH_TOKEN,
+      }),
+    }),
+  })(c, next)
+);
 app.post("/chat", async (c) => {
   const { memtatio, messages } = await c.req.json();
   console.info("GOT: ", memtatio);
