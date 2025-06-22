@@ -1,0 +1,16 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "memtatio-server",
+    "main": "src/index.ts",
+    "compatibility_date": "2025-06-17",
+    "vars": {
+        "GOOGLE_GENAI_API": "",
+        // for rate limiting
+        "UPSTASH_ENDPOINT": "",
+        "UPSTASH_TOKEN": "",
+        "CORS_ORIGIN": [
+            "https://memtatio.vercel.app"
+        ],
+        "ENV": "production"
+    },
+}

@@ -12,7 +12,7 @@ import { stream } from "hono/streaming";
 const app = new Hono<{ Bindings: CloudflareBindings }>();
 app.use("*", async (c, next) => {
   const corsMiddlewareHandler = cors({
-    origin: "*",
+    origin: c.env.CORS_ORIGIN,
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: [
       "X-Vercel-AI-Data-Stream",
@@ -42,20 +42,27 @@ app.use((c, next: Next) =>
   })(c, next)
 );
 
-app.get("/datasets", (c) => {
-  const dataset = dataSets.hitesh;
-  const examplesString = dataset.data
-    .map(
-      (i) =>
-        `#example\n${
-          i.title.startsWith("where he is talking about")
-            ? "this is title of the video"
-            : "this is title of the video where he is talking about"
-        } "${i.title}" :\n${i.text}\n`
-    )
-    .join("\n");
+// app.get("/datasets", (c) => {
+//   const dataset = dataSets.hitesh;
+//   const examplesString = dataset.data
+//     .map(
+//       (i) =>
+//         `#example\n${
+//           i.title.startsWith("where he is talking about")
+//             ? "this is title of the video"
+//             : "this is title of the video where he is talking about"
+//         } "${i.title}" :\n${i.text}\n`
+//     )
+//     .join("\n");
 
-  return c.text(examplesString);
+//   return c.text(examplesString);
+// });
+
+app.all("/health", (c) => {
+  return c.json({
+    message: "all systems are working properly",
+    "connection-ip": c.req.header("cf-connecting-ip"),
+  });
 });
 
 app.post("/chat", async (c) => {
