@@ -30,7 +30,7 @@ app.use(logger());
 app.use((c, next: Next) =>
   rateLimiter<{ Bindings: CloudflareBindings }>({
     windowMs: 60 * 1000 * 60 * 24, // 200 messages per 24 hours,
-    limit: 200,
+    limit: 20,
     standardHeaders: "draft-6",
     keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "",
     store: new RedisStore({
