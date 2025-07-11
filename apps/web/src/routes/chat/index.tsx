@@ -30,12 +30,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { type TOption, options } from "@/data/AIOptions.data";
+import { searchSchema } from "@/lib/schemas";
 import { nanoid } from "nanoid";
 import { toast } from "sonner";
-import { searchSchema } from "@/lib/schemas";
 
-import {  useLocalStorage } from "usehooks-ts";
 import { env } from "@/env";
+import { useLocalStorage } from "usehooks-ts";
 
 export const Route = createFileRoute("/chat/")({
   component: RouteComponent,
@@ -63,7 +63,7 @@ function RouteComponent() {
       };
     }[]
   >();
-  const [ratelimit, setLimit] = useLocalStorage<string>("rate-limit", "200");
+  const [ratelimit, setLimit] = useLocalStorage<string>("rate-limit", "20");
   const [isCopied, setIsCopied] = useState(false);
   const { input, messages, handleInputChange, handleSubmit, status, stop } =
     useChat({
@@ -126,8 +126,8 @@ function RouteComponent() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    setIsCopied(true)
-    setTimeout(()=>setIsCopied((p)=>!p),1000)
+    setIsCopied(true);
+    setTimeout(() => setIsCopied((p) => !p), 1000);
   };
 
   return (
@@ -215,7 +215,11 @@ function RouteComponent() {
                               onClick={() => copyToClipboard(message.content)}
                               className="h-6 p-2 py-4 text-sm"
                             >
-                              {isCopied ? <Check/> :<Copy className="size-3.5" />}
+                              {isCopied ? (
+                                <Check />
+                              ) : (
+                                <Copy className="size-3.5" />
+                              )}
                               {isCopied ? "copied" : "Copy"}
                             </Button>
                           </div>
