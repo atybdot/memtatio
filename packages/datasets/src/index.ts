@@ -1,4 +1,4 @@
-import { number } from "zod";
+import type{ number } from "zod";
 import ab from "./assets/data-sets/ab.json";
 import cwh from "./assets/data-sets/cwh.json";
 import hc from "./assets/data-sets/hc.json";
