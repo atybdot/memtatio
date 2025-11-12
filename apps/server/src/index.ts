@@ -7,8 +7,7 @@ import { stream } from "hono/streaming";
 import { corsMiddleware, rateLimitMiddleware } from "./utils";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
-app.use("*", corsMiddleware, logger());
-app.use(rateLimitMiddleware);
+app.use("*", logger(),corsMiddleware,rateLimitMiddleware);
 
 app.all("/health", (c) => {
 	return c.json({
